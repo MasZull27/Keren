@@ -21,6 +21,14 @@
         .intro {
             text-align: center;
             cursor: pointer;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(30, 30, 30, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .intro:hover {
+            background-color: rgba(50, 50, 50, 0.9);
         }
         
         .jumpscare {
@@ -44,46 +52,119 @@
         }
         
         .scary-face {
-            font-size: 150px;
-            animation: shake 0.5s infinite;
+            font-size: 180px;
+            animation: shake 0.2s infinite;
         }
         
         @keyframes shake {
             0% { transform: translate(0, 0) rotate(0deg); }
-            10% { transform: translate(-10px, -10px) rotate(-5deg); }
-            20% { transform: translate(10px, 10px) rotate(5deg); }
-            30% { transform: translate(-10px, 10px) rotate(-5deg); }
-            40% { transform: translate(10px, -10px) rotate(5deg); }
-            50% { transform: translate(-10px, -10px) rotate(-5deg); }
-            60% { transform: translate(10px, 10px) rotate(5deg); }
-            70% { transform: translate(-10px, 10px) rotate(-5deg); }
-            80% { transform: translate(10px, -10px) rotate(5deg); }
-            90% { transform: translate(-10px, -10px) rotate(-5deg); }
+            10% { transform: translate(-15px, -15px) rotate(-5deg); }
+            20% { transform: translate(15px, 15px) rotate(5deg); }
+            30% { transform: translate(-15px, 15px) rotate(-5deg); }
+            40% { transform: translate(15px, -15px) rotate(5deg); }
+            50% { transform: translate(-15px, -15px) rotate(-5deg); }
+            60% { transform: translate(15px, 15px) rotate(5deg); }
+            70% { transform: translate(-15px, 15px) rotate(-5deg); }
+            80% { transform: translate(15px, -15px) rotate(5deg); }
+            90% { transform: translate(-15px, -15px) rotate(-5deg); }
             100% { transform: translate(0, 0) rotate(0deg); }
         }
         
         .message {
-            font-size: 36px;
+            font-size: 50px;
             margin-top: 20px;
             color: red;
+            animation: flicker 0.3s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3e8e41;
         }
     </style>
 </head>
 <body>
     <div class="intro" id="intro">
         <h1>Klik untuk melihat sesuatu yang keren!</h1>
-        <p>Sebuah kejutan menanti Anda...</p>
+        <p>Sebuah kejutan menarik untukmu...</p>
+        <button class="btn" id="startButton">Lihat Sekarang</button>
     </div>
     
     <div class="jumpscare" id="jumpscare">
         <div class="jumpscare-content">
             <div class="scary-face">👹</div>
-            <div class="message">SURPRISE!!!</div>
+            <div class="message">YAHAHA HAYUUU!!!</div>
         </div>
     </div>
 
     <script>
-        document.getElementById('intro').addEventListener('click', function() {
+        // Fungsi untuk mengaktifkan audio
+        function prepareAndPlayAudio() {
+            // Buat elemen audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Buat oscillator untuk suara menjerit
+            const screamOscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            // Atur jenis dan frekuensi
+            screamOscillator.type = 'sawtooth';
+            screamOscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            screamOscillator.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 0.5);
+            
+            // Atur volume yang sangat keras
+            gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+            
+            // Sambungkan node
+            screamOscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Mulai dan hentikan suara
+            screamOscillator.start();
+            screamOscillator.stop(audioContext.currentTime + 1.5);
+            
+            // Buat suara ledakan keras setelahnya
+            setTimeout(() => {
+                const explosionOscillator = audioContext.createOscillator();
+                const explosionGain = audioContext.createGain();
+                
+                explosionOscillator.type = 'square';
+                explosionOscillator.frequency.setValueAtTime(50, audioContext.currentTime);
+                explosionOscillator.frequency.linearRampToValueAtTime(20, audioContext.currentTime + 0.5);
+                
+                explosionGain.gain.setValueAtTime(1, audioContext.currentTime);
+                explosionGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
+                
+                explosionOscillator.connect(explosionGain);
+                explosionGain.connect(audioContext.destination);
+                
+                explosionOscillator.start();
+                explosionOscillator.stop(audioContext.currentTime + 1.5);
+            }, 200);
+        }
+
+        // Tunggu interaksi pengguna
+        document.getElementById('startButton').addEventListener('click', function() {
             // Sembunyikan intro
             document.getElementById('intro').style.display = 'none';
             
@@ -93,15 +174,22 @@
                 const jumpscareElement = document.getElementById('jumpscare');
                 jumpscareElement.style.display = 'flex';
                 
-                // Putar suara keras (opsional)
-                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLHP///92LAApjfr/6m8HAAFv2fcCZAwFAILM7QxaDQkAn9XqElUVDQDB2OUcUhINAN3h8DVmLBgADD6zYNX/pKPH//9sbWkvQe5amrP//3/q//+A4P//oOD//5rO6lyU0t5SoN3pYKXw+mevAAIFM49V//8LMMHh//9mNyQuYy0jNXpTBTsWOQorbPUGXiNzJGQeEzlSTTxIVF5OUGJLSVBMSFZLSlFOTV5ITk9ESlRMVWlvcERCX0xEWExGY0dDRkBaSFpLUVxNVFdOT0pPRVRMV2ZlcVJIVVFNY09OWk9NWk9NV0xNVk9JUlJPYVhIT05ESlNMS05JSlVUUltZVldTUVFRVU1NTE9RT0pOUVRUVk9KT0xPVVVPUE9MTVFQUU1OUVBNTk9KR0pLUk9TT0pLS09NT0dJTFBTT0ZDRlJMR0pDSE5HSklJTFRQT0tITU9LSUxMTVFLSEtLU05JRkVITEtOT01MTU5IRUZOVFFMTUlMTkhHSExJRkdKSkxMTElFSEpOUk9PSklKTk5JSUdLTE1OTEhGSU5KSEtLTU9IR0VJR0ZITExKSUlGR0pLS0pMTUxHR0dKS0pIRUdJSkpGR0dDR0lJTE1IREVGSElISEdHSEpJRkZIS0lFREZITE1KSUZFSUxJR0RER0tISUZFRUZJR0NERE1LRkNCRklHQ0VGR0lHRUVDQ0VGRUZERkdFRERERkdFRkdFREZJSEdFRUVHR0dDQkFFRkdHRUNBQ0dISUY/QUNER0RCQ0VGR0VDQ0VISUdDQkNGR0RCQkRGSEdFQ0RFRUVCQ0NGSElFQUBDSExHQj89QUZIRUJBQ0hKSUVDQ0ZISEZCQUNFRkZEQkFDR0hHREFBQkVGRUJCREdIRUFAQURGRUNBQURFRkZEQT9CR0dCQD9CRkVEQUBBQ0RDQ0FAP0JDREZCQD9CQ0NCQUFCRENCPz9BQ0RCQEBBQkRCQD8/QkJCQT8/QUJCQkBAQUFCQUA/P0BBQUBBP0BBQUJCQUBAQUJCQkFCP0FCQj89PkFDQ0A+PD5BQUBBP0BBQkFAPj09QEJBP0BBQkJBQUA/QEFCQkJCQD9AP0BBQUE/QEFBQkJBP0A/QUJDQT8+P0FCQkE/PD0/QUFBP0BBQkJCQUE/P0FCQkFAPj9AQUJCQUE/PkBBQUJDP0A/QUJCQkE/Pj9BQUEAQEBBQUE/PT5AQkNBPj4/QkRGQj89P0JERkVAPj9CREZFQT4+QUNFRkNAP0FCQ0RCQD5AQ0VGQ0A/QUNFR0VCP0BCREZGQz89QENFRkM/PUBDRkdFQT5AQkVHR0RBP0FCREhIRUFAQkVISUZDQUJFSElHREJCRUhKSUZDQ0RHSUtJR0RFR0pMTEpHRUZIS01NS0hGR0pNTk1KSEhJTE5OTElISUpMTk9MSklKS01PTkxLS0xNT1BPTUtLTE5PT05MS0tNT1BPTUxMTU9QT05NTU1OT09OTU1OTk9PT05NTU1OT09OTk1NTU5PTk5NTk5OTk5OTk5OTk5OTU1NTk9PTk1MTU5PT05NTE1OT05OTU1NTk5OTk5NTU5OTk5OTk5OTk5OTk5OTk9OTk5OTk5PT09OTk5PT09PTk5OTk9PT09OTk5OT09PT05OTk9PT09PT09PUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFAnKU0uK002JysuMispLjcsKSgkKjNCPzgxMTk9PDs3NTc8QUA+Ojk8QEFCQ0A8PUFFRkVCQEBCRkhIR0RCQkRHSElHRUNDRklLSkdEQ0ZJS0tJR0VGSUtLSkkA');
-                audio.play();
+                // Putar suara keras
+                prepareAndPlayAudio();
                 
-                // Reset halaman setelah beberapa detik (opsional)
+                // Ganti gambar setelah beberapa detik
                 setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            }, 2000); // Tunggu 2 detik sebelum jumpscare
+                    document.querySelector('.scary-face').innerHTML = '😱';
+                    
+                    // Putar suara tambahan
+                    prepareAndPlayAudio();
+                    
+                    // Reset halaman setelah beberapa detik
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                }, 1500);
+            }, 1000); // Tunggu 1 detik sebelum jumpscare
         });
     </script>
 </body>
