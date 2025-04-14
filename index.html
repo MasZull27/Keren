@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lihat Ini!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        .intro {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .jumpscare {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .jumpscare-content {
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .scary-face {
+            font-size: 150px;
+            animation: shake 0.5s infinite;
+        }
+        
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-10px, -10px) rotate(-5deg); }
+            20% { transform: translate(10px, 10px) rotate(5deg); }
+            30% { transform: translate(-10px, 10px) rotate(-5deg); }
+            40% { transform: translate(10px, -10px) rotate(5deg); }
+            50% { transform: translate(-10px, -10px) rotate(-5deg); }
+            60% { transform: translate(10px, 10px) rotate(5deg); }
+            70% { transform: translate(-10px, 10px) rotate(-5deg); }
+            80% { transform: translate(10px, -10px) rotate(5deg); }
+            90% { transform: translate(-10px, -10px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        .message {
+            font-size: 36px;
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro" id="intro">
+        <h1>Klik untuk melihat sesuatu yang keren!</h1>
+        <p>Sebuah kejutan menanti Anda...</p>
+    </div>
+    
+    <div class="jumpscare" id="jumpscare">
+        <div class="jumpscare-content">
+            <div class="scary-face">👹</div>
+            <div class="message">SURPRISE!!!</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('intro').addEventListener('click', function() {
+            // Sembunyikan intro
+            document.getElementById('intro').style.display = 'none';
+            
+            // Tunda jumpscare untuk membuat kejutan
+            setTimeout(function() {
+                // Tampilkan jumpscare
+                const jumpscareElement = document.getElementById('jumpscare');
+                jumpscareElement.style.display = 'flex';
+                
+                // Putar suara keras (opsional)
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLHP///92LAApjfr/6m8HAAFv2fcCZAwFAILM7QxaDQkAn9XqElUVDQDB2OUcUhINAN3h8DVmLBgADD6zYNX/pKPH//9sbWkvQe5amrP//3/q//+A4P//oOD//5rO6lyU0t5SoN3pYKXw+mevAAIFM49V//8LMMHh//9mNyQuYy0jNXpTBTsWOQorbPUGXiNzJGQeEzlSTTxIVF5OUGJLSVBMSFZLSlFOTV5ITk9ESlRMVWlvcERCX0xEWExGY0dDRkBaSFpLUVxNVFdOT0pPRVRMV2ZlcVJIVVFNY09OWk9NWk9NV0xNVk9JUlJPYVhIT05ESlNMS05JSlVUUltZVldTUVFRVU1NTE9RT0pOUVRUVk9KT0xPVVVPUE9MTVFQUU1OUVBNTk9KR0pLUk9TT0pLS09NT0dJTFBTT0ZDRlJMR0pDSE5HSklJTFRQT0tITU9LSUxMTVFLSEtLU05JRkVITEtOT01MTU5IRUZOVFFMTUlMTkhHSExJRkdKSkxMTElFSEpOUk9PSklKTk5JSUdLTE1OTEhGSU5KSEtLTU9IR0VJR0ZITExKSUlGR0pLS0pMTUxHR0dKS0pIRUdJSkpGR0dDR0lJTE1IREVGSElISEdHSEpJRkZIS0lFREZITE1KSUZFSUxJR0RER0tISUZFRUZJR0NERE1LRkNCRklHQ0VGR0lHRUVDQ0VGRUZERkdFRERERkdFRkdFREZJSEdFRUVHR0dDQkFFRkdHRUNBQ0dISUY/QUNER0RCQ0VGR0VDQ0VISUdDQkNGR0RCQkRGSEdFQ0RFRUVCQ0NGSElFQUBDSExHQj89QUZIRUJBQ0hKSUVDQ0ZISEZCQUNFRkZEQkFDR0hHREFBQkVGRUJCREdIRUFAQURGRUNBQURFRkZEQT9CR0dCQD9CRkVEQUBBQ0RDQ0FAP0JDREZCQD9CQ0NCQUFCRENCPz9BQ0RCQEBBQkRCQD8/QkJCQT8/QUJCQkBAQUFCQUA/P0BBQUBBP0BBQUJCQUBAQUJCQkFCP0FCQj89PkFDQ0A+PD5BQUBBP0BBQkFAPj09QEJBP0BBQkJBQUA/QEFCQkJCQD9AP0BBQUE/QEFBQkJBP0A/QUJDQT8+P0FCQkE/PD0/QUFBP0BBQkJCQUE/P0FCQkFAPj9AQUJCQUE/PkBBQUJDP0A/QUJCQkE/Pj9BQUEAQEBBQUE/PT5AQkNBPj4/QkRGQj89P0JERkVAPj9CREZFQT4+QUNFRkNAP0FCQ0RCQD5AQ0VGQ0A/QUNFR0VCP0BCREZGQz89QENFRkM/PUBDRkdFQT5AQkVHR0RBP0FCREhIRUFAQkVISUZDQUJFSElHREJCRUhKSUZDQ0RHSUtJR0RFR0pMTEpHRUZIS01NS0hGR0pNTk1KSEhJTE5OTElISUpMTk9MSklKS01PTkxLS0xNT1BPTUtLTE5PT05MS0tNT1BPTUxMTU9QT05NTU1OT09OTU1OTk9PT05NTU1OT09OTk1NTU5PTk5NTk5OTk5OTk5OTk5OTU1NTk9PTk1MTU5PT05NTE1OT05OTU1NTk5OTk5NTU5OTk5OTk5OTk5OTk5OTk9OTk5OTk5PT09OTk5PT09PTk5OTk9PT09OTk5OT09PT05OTk9PT09PT09PUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFAnKU0uK002JysuMispLjcsKSgkKjNCPzgxMTk9PDs3NTc8QUA+Ojk8QEFCQ0A8PUFFRkVCQEBCRkhIR0RCQkRHSElHRUNDRklLSkdEQ0ZJS0tJR0VGSUtLSkkA');
+                audio.play();
+                
+                // Reset halaman setelah beberapa detik (opsional)
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }, 2000); // Tunggu 2 detik sebelum jumpscare
+        });
+    </script>
+</body>
+</html>
